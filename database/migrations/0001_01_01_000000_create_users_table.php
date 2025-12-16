@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('profile_photo_path', 2048)->nullable();
             $table->timestamps();
             $table->boolean('enable')->default = 0;
-            $table->unsignedInteger('legajo')->nullable();
+            $table->string('legajo', 10)->nullable();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
