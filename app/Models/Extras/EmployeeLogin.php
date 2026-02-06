@@ -1,5 +1,5 @@
 <?php
-namespace App\Models;
+namespace App\Models\Extras;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -7,6 +7,7 @@ class EmployeeLogin extends Model
 {
     protected $table = 'fsc_personal_link';
     public $timestamps = false;
+    protected $connection = 'RHumanos';
 
     protected $fillable = [
         'employee_id',

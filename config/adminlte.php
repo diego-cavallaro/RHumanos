@@ -298,7 +298,8 @@ return [
     |
     */
 
-    'menu' => [
+    'menu' => 
+    [
         // Navbar items:
         [
             'type' => 'navbar-search',
@@ -332,59 +333,45 @@ return [
             'url' => 'admin/settings',
             'icon' => 'fas fa-fw fa-lock',
         ],
+        ['header' => 'RECURSOS HUMANOS'],
+        
         [
-            'text' => 'multilevel',
-            'icon' => 'fas fa-fw fa-share',
-            'submenu' => [
+            'text' => 'Consulta de Horas',
+            'icon' => 'fas fa-angle-double-right',
+            'can' => 'canSeeReportsMenu',
+            'submenu' => 
+            [
                 [
-                    'text' => 'level_one',
+                    'text' => 'Pendientes de Aprobación',
                     'url' => '#',
+                    'can' => 'canSeePendingReport',
                 ],
                 [
-                    'text' => 'level_one',
+                    'text' => 'Por Persona y Período',
                     'url' => '#',
-                    'submenu' => [
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                        ],
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                            'submenu' => [
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                            ],
-                        ],
-                    ],
+                    'can' => 'canSeePeriodReport',
                 ],
                 [
-                    'text' => 'level_one',
+                    'text' => 'Control',
                     'url' => '#',
+                    'can' => 'canSeeControlReport',
                 ],
             ],
         ],
-        ['header' => 'labels'],
         [
-            'text' => 'important',
-            'icon_color' => 'red',
-            'url' => '#',
+            'text' => 'Gestión de Horas',
+            'url' => '/Extras/Show',
+            'can' => 'canSeeHoursEntryMenu',
         ],
         [
-            'text' => 'warning',
-            'icon_color' => 'yellow',
-            'url' => '#',
+            'text' => 'Aprobación de Horas',
+            'url' => '/Extras/Aprobacion',
+            'can' => 'canSeeAprovalMenu',
         ],
         [
-            'text' => 'information',
-            'icon_color' => 'cyan',
-            'url' => '#',
+            'text' => 'Cierre de Horas',
+            'url' => 'Extras/Cierre',
+            'can' => 'canSeeHoursClosingMenu',
         ],
     ],
 
