@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Extras\Employee;
 use App\Models\Extras\ExtraReason;
 
-class Extra extends Model
+class ExtraEstado extends Model
 {
-    protected $table = 'fsc_extras';
-    protected $primaryKey = 'RowId';
+    protected $table = 'fsc_extras_estados';
+    protected $primaryKey = 'Id';
     public $timestamps = false;
     protected $connection = 'RHumanos';
 
@@ -23,9 +23,5 @@ class Extra extends Model
     public function Motivo()
     {
         return $this->BelongsTo(ExtraReason::class, 'ID_Motivo', 'Id');
-    }
-    public function Estado()
-    {
-        return $this->BelongsTo(ExtraEstado::class, 'EXTRA_ESTADO_ID', 'Id');
     }
 }

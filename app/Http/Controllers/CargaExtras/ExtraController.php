@@ -151,6 +151,7 @@ class ExtraController extends Controller
             $extra->Observaciones = $request->post('Observaciones');
             $extra->Desde = $extraDesde;
             $extra->Hasta = $extraHasta;
+            $extra->EXTRA_ESTADO_ID = 1;  //Le asignamos estado 'Pendiente'
 
             $extra->save();
 
@@ -199,7 +200,7 @@ class ExtraController extends Controller
         return redirect()->route('extras.show')->with("success","Modificado con éxito");
     }
 
-    public function eliminar($rowId)
+    public function eliminar($rowId): RedirectResponse
     {
         DB::beginTransaction();
         try 
@@ -220,20 +221,29 @@ class ExtraController extends Controller
 
     public function aprobacion(): View
     {
-        // return view('extras.index', 
-        // [
-        //   'extras' => Extra::with(['employee', 'reason'])->latest()->get(),
-        // ]);
         return view('extras.aprobacionExtras');
     }
 
     public function cierre(): View
     {
-        // return view('extras.index', 
-        // [
-        //   'extras' => Extra::with(['employee', 'reason'])->latest()->get(),
-        // ]);
         return view('extras.cierreExtras');
     }
 
+    public function aprobar(Request $request): RedirectResponse
+    {
+        $idsSeleccionados = $request->input('items', []); // Array de IDs
+        // Lógica para procesar los IDs
+        // Ejemplo: Item::whereIn('id', $idsSeleccionados)->update(['activo' => 1]);
+        // return redirect()->back()->with('success', 'Items actualizados');
+        return redirect()->route('extras.aprobacion')->with("success","Aprobación con éxito");
+    }
+
+    public function cerrar(Request $request): RedirectResponse
+    {
+        $idsSeleccionados = $request->input('items', []); // Array de IDs
+        // Lógica para procesar los IDs
+        // Ejemplo: Item::whereIn('id', $idsSeleccionados)->update(['activo' => 1]);
+        // return redirect()->back()->with('success', 'Items actualizados');
+        return redirect()->route('extras.cierre')->with("success","Cierre con éxito");
+    }
 }

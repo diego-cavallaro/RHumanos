@@ -102,8 +102,8 @@
     <script>
         function cambioHora()
         {
-            const timeDesde = document.getElementById('desde');
-            const timeHasta = document.getElementById('hasta');
+            const timeDesde = document.getElementById('Desde');
+            const timeHasta = document.getElementById('Hasta');
 
             if(!timeDesde || !timeHasta) return;
 
