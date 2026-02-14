@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Extras\Extra;
 use App\Models\Extras\ExtraReason;
 use App\Models\Extras\Employee;
+use App\Models\Extras\ExtraEstado;
 use App\Models\User;
 use App\Http\Requests\Extras\StoreExtra;
 use App\Http\Requests\Extras\UpdateExtra;
@@ -48,7 +49,7 @@ class ExtraController extends Controller
                                             ->with('idMotivo', $motivoInicial);
     }
 
-    public function filter(Request $request)
+    public function filterCarga(Request $request):View
     {
         //Obtenemos el Area asociada al usuario Logueado
         //------------------------------------------------------------------
@@ -221,7 +222,77 @@ class ExtraController extends Controller
 
     public function aprobacion(): View
     {
-        return view('extras.aprobacionExtras');
+        //Por defecto definimos como motivo 'Extras'
+        $motivoInicial = 8;
+        //Estado con el que vamos a filtrar las extras a aprobar (Pendiente)
+        $estadoInicial = 1;
+        //Para setear inicialmente el combo de Accion en 'Aprobar'
+        $estadoAccion = 2;
+
+        //Obtenemos el Area asociada al usuario Logueado
+        //------------------------------------------------------------------
+        $area = obtenerAreaUsuarioActual();
+        //-----------------------------------------------------------------
+        $extrasMotivos = ExtraReason::orderBy('Id', 'asc')->get();
+        //-----------------------------------------------------------------
+        $extrasEstados = ExtraEstado::orderBy('Id', 'asc')->where('ES_APROBACION', 1)->get();
+        //-----------------------------------------------------------------
+        
+        //Obtenemos el Login del usuario logueado
+        $usuario = Auth::user();
+
+        //Obtenemos las Extras filtradas según los nuevos criterios que vinieron por pantalla
+        $queryExtras = Extra::with('Empleado')->where('area', $area)
+                                 ->where('ID_Motivo', $motivoInicial)
+                                 ->where('Vb1', 0)
+                                 ->where('Cerrado', 0)
+                                 ->where('EXTRA_ESTADO_ID', $estadoInicial)
+                                 ->orderBy('Fecha', 'desc')->get();
+
+        return view('extras.aprobacionExtras')->with(compact('queryExtras'))
+                                         ->with(compact('extrasMotivos'))
+                                         ->with(compact('extrasEstados'))
+                                         ->with('idMotivo', $motivoInicial)
+                                         ->with('idEstado', $estadoAccion);
+    }
+
+    public function filterAprobacion(Request $request):View
+    {
+
+        if( $request->post('motivoExtra') != null){
+            $motivo = $request->post('motivoExtra');
+        };
+        if( $request->post('estadoExtra') != null){
+            $estado = $request->post('estadoExtra'); 
+        }
+        //Estado con el que vamos a filtrar las extras a aprobar (Pendiente)
+        $estadoInicial = 1;
+
+        //Obtenemos el Area asociada al usuario Logueado
+        //------------------------------------------------------------------
+        $area = obtenerAreaUsuarioActual();
+        //-----------------------------------------------------------------
+        $extrasMotivos = ExtraReason::orderBy('Id', 'asc')->get();
+        //-----------------------------------------------------------------
+        $extrasEstados = ExtraEstado::orderBy('Id', 'asc')->where('ES_APROBACION', 1)->get();
+        //-----------------------------------------------------------------
+        
+        //Obtenemos el Login del usuario logueado
+        $usuario = Auth::user();
+
+        //Obtenemos las Extras filtradas según los nuevos criterios que vinieron por pantalla
+        $queryExtras = Extra::with('Empleado')->where('area', $area)
+                                 ->where('ID_Motivo', $motivo)
+                                 ->where('Vb1', 0)
+                                 ->where('Cerrado', 0)
+                                 ->where('EXTRA_ESTADO_ID', $estadoInicial)
+                                 ->orderBy('Fecha', 'desc')->get();
+
+        return view('extras.aprobacionExtras')->with(compact('queryExtras'))
+                                         ->with(compact('extrasMotivos'))
+                                         ->with(compact('extrasEstados'))
+                                         ->with('idMotivo', $motivo)
+                                         ->with('idEstado', $estado);
     }
 
     public function cierre(): View

@@ -9,7 +9,7 @@
 @section('content')
     {{-- Dynamic content --}}
     <div class="card-body">
-        <form action="{{route('extras.filter')}}" method="POST">
+        <form action="{{route('extras.filtercarga')}}" method="POST">
             @csrf
             <div class="row">
                 <div class="form-group col-md-3">
