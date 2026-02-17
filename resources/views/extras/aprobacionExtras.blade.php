@@ -19,41 +19,30 @@
                        @endforeach
                     </select>
                 </div>
-                <div class="form-group col-md-5" style="text-align: left">
+                <div class="form-group col-md8">
+                </div>
+            </div>
+            <button id="btnRefrescar"  class="d-none">Refrescar</button>
+        </form>
+        <form action="{{ route('extras.aprobar') }}" method="POST">
+            @csrf
+            <div class="row">
+                <div class="form-group col-md-9">
                 </div>
                 <div class="form-group col-md-2" style="text-align: left">
                     {{-- <label for="estadoExtra">Estado a Aplicar</label> --}}
-                    <select name="estadoExtra" id="estadoExtra" class="form-control" required onchange="refrescarPantalla()">
+                    <select name="estadoExtra" id="estadoExtra" class="form-control" required>
                        @foreach ($extrasEstados as $estado)
                           <option value="{{ $estado->Id }}" {{$estado->Id == $idEstado ? "selected" : ""}} >{{ $estado->Description }}</option>
                        @endforeach
                     </select>
                 </div>
-                <div class="form-group col-md-1" style="vertical-align: bottom">
-                    <a href="{{ route('extras.aprobar') }}" class="btn btn-primary">
+                <div class="form-group col-md-1" style="text-align: right">
+                    <button type="submit" id="btnAplicar" class="btn btn-primary" onclick="deshabilitaGraba(this);">
                         Aplicar
-                    </a>
+                    </button>
                 </div>
             </div>
-            <button id="btnRefrescar"  class="d-none">Refrescar</button>
-        </form>
-
-{{-- EJEMPLO --}}
-{{-- <form action="{{ route('items.procesar') }}" method="POST">
-    @csrf
-    <table>
-        @foreach($items as $item)
-        <tr>
-            <td><input type="checkbox" name="items[]" value="{{ $item->id }}"></td>
-            <td>{{ $item->nombre }}</td>
-        </tr>
-        @endforeach
-    </table>
-    <button type="submit">Procesar Seleccionados</button>
-</form> --}}
-{{-- EJEMPLO --}}
-
-        <form action="{{ route('extras.aprobar') }}" method="POST">
             <table id='extras'class="table table-bordered table-hover">
                 <thead>
                     <th>Legajo</th>
@@ -80,17 +69,7 @@
                             <td>{{$extra->Responsable}}</td>
                             <td class="text-right">{{ Carbon\Carbon::createFromDate($extra->Desde)->diffInMinutes(Carbon\Carbon::createFromDate($extra->Hasta)) }}</td>
                             <td>{{$extra->Observaciones}}</td>
-                            <td><input type="checkbox" name="items[]" value="{{ $extra->RowId }}"></td>
-                            {{-- <td class="text-center">
-                                <a href="{{ route('extras.edicion', $extra->RowId) }}" class="btn btn-primary btn-sm">
-                                    Editar
-                                </a>
-                            </td>
-                            <td class="text-center">
-                                <a href="{{ route('extras.eliminar', $extra->RowId) }}" class="btn btn-primary btn-sm">
-                                    Borrar
-                                </a>
-                            </td> --}}
+                            <td><input type="checkbox" name="items[]" value="{{ $extra->RowId }}" id="items-{{ $extra->RowId }}"></td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -122,5 +101,13 @@
                 $(this).find("input").attr('checked', value);
             });
         }
+
+        function deshabilitaGraba(sender)
+        {
+            sender.disabled= true;
+            sender.innerHTML = "<span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span> Grabando...";
+            sender.form.submit();
+        }
+
     </script>
 @stop

@@ -262,6 +262,7 @@ class ExtraController extends Controller
         if( $request->post('motivoExtra') != null){
             $motivo = $request->post('motivoExtra');
         };
+        $estado = 2;
         if( $request->post('estadoExtra') != null){
             $estado = $request->post('estadoExtra'); 
         }
@@ -302,7 +303,37 @@ class ExtraController extends Controller
 
     public function aprobar(Request $request): RedirectResponse
     {
-        $idsSeleccionados = $request->input('items', []); // Array de IDs
+        if($request->has('items'))
+        {
+            $idsSeleccionados = $request->input('items'); // Array de IDs Seleccionados (Check)
+            $estado = $request->post('estadoExtra');
+            $usuario = Auth::user()->name;
+
+            // dd($idsSeleccionados);
+
+            DB::beginTransaction();
+            try 
+            {
+                foreach ($idsSeleccionados as $rowId)
+                {
+                    $extra = Extra::find($rowId);
+                    if($estado = 2)
+                    {
+                        $extra->Vb1 = 1;
+                    }
+                    $extra->Aprobador = $usuario;
+                    $extra->EXTRA_ESTADO_ID = $estado;
+                    $extra->save();
+                }
+
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollBack();
+                // dd($e);
+                return redirect()->route('extras.aprobacion')->with("error","Error al intentar grabar");
+            }
+        }
+
         // Lógica para procesar los IDs
         // Ejemplo: Item::whereIn('id', $idsSeleccionados)->update(['activo' => 1]);
         // return redirect()->back()->with('success', 'Items actualizados');
