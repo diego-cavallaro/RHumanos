@@ -25,6 +25,7 @@ Route::middleware
                     Route::get('/Extras/Aprobacion', [ExtraController::class, 'aprobacion'])->name('extras.aprobacion');
                     Route::post('/Extras/FilterA/', [ExtraController::class, 'filterAprobacion'])->name('extras.filteraprobacion');
                     Route::get('/Extras/Cierre', [ExtraController::class, 'cierre'])->name('extras.cierre');
+                    Route::post('/Extras/FilterCi/', [ExtraController::class, 'filterCierre'])->name('extras.filtercierre');
 
                     Route::post('/Extras/Aprobar', [ExtraController::class, 'aprobar'])->name('extras.aprobar');
                     Route::post('/Extras/Cerrar', [ExtraController::class, 'cerrar'])->name('extras.cerrar');

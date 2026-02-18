@@ -298,7 +298,76 @@ class ExtraController extends Controller
 
     public function cierre(): View
     {
-        return view('extras.cierreExtras');
+                //Por defecto definimos como motivo 'Extras'
+        $motivoInicial = 8;
+        //Estado con el que vamos a filtrar las extras a aprobar (Aprobadas)
+        $estadoInicial = 2;
+        //Para setear inicialmente el combo de Accion en 'Cierre'
+        $estadoAccion = 3;
+
+        //Obtenemos el Area asociada al usuario Logueado
+        //------------------------------------------------------------------
+        // $area = obtenerAreaUsuarioActual();
+        //-----------------------------------------------------------------
+        $extrasMotivos = ExtraReason::orderBy('Id', 'asc')->get();
+        //-----------------------------------------------------------------
+        $extrasEstados = ExtraEstado::orderBy('Id', 'asc')->where('ES_CIERRE', 1)->get();
+        //-----------------------------------------------------------------
+        
+        //Obtenemos el Login del usuario logueado
+        $usuario = Auth::user();
+
+        //Obtenemos las Extras filtradas según los nuevos criterios que vinieron por pantalla
+        $queryExtras = Extra::with('Empleado')->where('ID_Motivo', $motivoInicial)
+                                 ->where('Vb1', 1)
+                                 ->where('Cerrado', 0)
+                                 ->where('EXTRA_ESTADO_ID', $estadoInicial)
+                                 ->orderBy('Fecha', 'desc')->get();
+
+        return view('extras.cierreExtras')->with(compact('queryExtras'))
+                                         ->with(compact('extrasMotivos'))
+                                         ->with(compact('extrasEstados'))
+                                         ->with('idMotivo', $motivoInicial)
+                                         ->with('idEstado', $estadoAccion);
+    }
+
+    public function filterCierre(Request $request):View
+    {
+
+        if( $request->post('motivoExtra') != null){
+            $motivo = $request->post('motivoExtra');
+        };
+        $estado = 3;
+        if( $request->post('estadoExtra') != null){
+            $estado = $request->post('estadoExtra'); 
+        }
+        //Estado con el que vamos a filtrar las extras a aprobar (Aprobada)
+        $estadoInicial = 2;
+
+        //Obtenemos el Area asociada al usuario Logueado
+        //------------------------------------------------------------------
+        // $area = obtenerAreaUsuarioActual();
+        //-----------------------------------------------------------------
+        $extrasMotivos = ExtraReason::orderBy('Id', 'asc')->get();
+        //-----------------------------------------------------------------
+        $extrasEstados = ExtraEstado::orderBy('Id', 'asc')->where('ES_CIERRE', 1)->get();
+        //-----------------------------------------------------------------
+        
+        //Obtenemos el Login del usuario logueado
+        $usuario = Auth::user();
+
+        //Obtenemos las Extras filtradas según los nuevos criterios que vinieron por pantalla
+        $queryExtras = Extra::with('Empleado')->where('ID_Motivo', $motivo)
+                                 ->where('Vb1', 1)
+                                 ->where('Cerrado', 0)
+                                 ->where('EXTRA_ESTADO_ID', $estadoInicial)
+                                 ->orderBy('Fecha', 'desc')->get();
+
+        return view('extras.cierreExtras')->with(compact('queryExtras'))
+                                          ->with(compact('extrasMotivos'))
+                                          ->with(compact('extrasEstados'))
+                                          ->with('idMotivo', $motivo)
+                                          ->with('idEstado', $estado);
     }
 
     public function aprobar(Request $request): RedirectResponse
@@ -317,11 +386,18 @@ class ExtraController extends Controller
                 foreach ($idsSeleccionados as $rowId)
                 {
                     $extra = Extra::find($rowId);
-                    if($estado = 2)
+                    if($estado == 2)
                     {
                         $extra->Vb1 = 1;
+                        $extra->FechaAprobacion = \Carbon\Carbon::now()->toDateTimeString();
+                        $extra->Aprobador = $usuario;
                     }
-                    $extra->Aprobador = $usuario;
+                    else if($estado == 4)
+                    {
+                        $extra->FechaRechazo = \Carbon\Carbon::now()->toDateTimeString();
+                        $extra->UsuarioRechazo = $usuario;
+                    }
+
                     $extra->EXTRA_ESTADO_ID = $estado;
                     $extra->save();
                 }
@@ -334,18 +410,48 @@ class ExtraController extends Controller
             }
         }
 
-        // Lógica para procesar los IDs
-        // Ejemplo: Item::whereIn('id', $idsSeleccionados)->update(['activo' => 1]);
-        // return redirect()->back()->with('success', 'Items actualizados');
         return redirect()->route('extras.aprobacion')->with("success","Aprobación con éxito");
     }
 
     public function cerrar(Request $request): RedirectResponse
     {
-        $idsSeleccionados = $request->input('items', []); // Array de IDs
-        // Lógica para procesar los IDs
-        // Ejemplo: Item::whereIn('id', $idsSeleccionados)->update(['activo' => 1]);
-        // return redirect()->back()->with('success', 'Items actualizados');
+        if($request->has('items'))
+        {
+            $idsSeleccionados = $request->input('items'); // Array de IDs Seleccionados (Check)
+            $estado = $request->post('estadoExtra');
+            $usuario = Auth::user()->name;
+
+            // dd($idsSeleccionados);
+
+            DB::beginTransaction();
+            try 
+            {
+                foreach ($idsSeleccionados as $rowId)
+                {
+                    $extra = Extra::find($rowId);
+                    if($estado == 3)
+                    {
+                        $extra->FechaCierre = \Carbon\Carbon::now()->toDateTimeString();
+                    }
+                    else if($estado == 4)
+                    {
+                        $extra->FechaRechazo = \Carbon\Carbon::now()->toDateTimeString();
+                        $extra->UsuarioRechazo = $usuario;
+                    }
+
+                    $extra->EXTRA_ESTADO_ID = $estado;
+                    $extra->save();
+                }
+
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollBack();
+                // dd($e);
+                return redirect()->route('extras.cierre')->with("error","Error al intentar grabar");
+            }
+        }
+
+        // return redirect()->route('extras.aprobacion')->with("success","Aprobación con éxito");
         return redirect()->route('extras.cierre')->with("success","Cierre con éxito");
     }
 }

@@ -75,6 +75,11 @@
                 </tbody>
             </table>
             <hr>
+            <div class="row col-md-12">
+                @error('error')
+                    <span style="color: red">{{ $message }}</span>
+                @enderror
+            </div>
         </form>
     </div>
 @stop
