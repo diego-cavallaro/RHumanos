@@ -343,18 +343,24 @@ return [
             [
                 [
                     'text' => 'Pendientes de Aprobación',
-                    'url' => '#',
+                    'url' => 'http://sqlsrv1/Reports/report/HS Extras Personal/Horas Pendientes Aprobacion',
                     'can' => 'canSeePendingReport',
+                    'target' => '_blank',
+                    // 'icon' => 'fa-file-o',
                 ],
                 [
                     'text' => 'Por Persona y Período',
-                    'url' => '#',
+                    'url' => 'http://sqlsrv1/Reports/report/HS Extras Personal/Persona Periodo',
                     'can' => 'canSeePeriodReport',
+                    'target' => '_blank',
+                    // 'icon' => 'fa-file-o',
                 ],
                 [
                     'text' => 'Control',
-                    'url' => '#',
+                    'url' => 'http://sqlsrv1/Reports/report/RRHH/Control',
                     'can' => 'canSeeControlReport',
+                    'target' => '_blank',
+                    // 'icon' => 'fa-file-o',
                 ],
             ],
         ],
@@ -362,16 +368,19 @@ return [
             'text' => 'Gestión de Horas',
             'url' => '/Extras/Show',
             'can' => 'canSeeHoursEntryMenu',
+            'icon' => 'fas fa-table',
         ],
         [
             'text' => 'Aprobación de Horas',
             'url' => '/Extras/Aprobacion',
             'can' => 'canSeeAprovalMenu',
+            'icon' => 'fas fa-table',
         ],
         [
             'text' => 'Cierre de Horas',
             'url' => 'Extras/Cierre',
             'can' => 'canSeeHoursClosingMenu',
+            'icon' => 'fas fa-table',
         ],
     ],
 
