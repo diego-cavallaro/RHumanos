@@ -312,32 +312,12 @@ return [
         ],
 
         // Sidebar items:
-        [
-            'type' => 'sidebar-menu-search',
-            'text' => 'search',
-        ],
-        [
-            'text' => 'blog',
-            'url' => 'admin/blog',
-            'can' => 'manage-blog',
-        ],
-
-        ['header' => 'account_settings'],
-        [
-            'text' => 'profile',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-user',
-        ],
-        [
-            'text' => 'change_password',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-lock',
-        ],
         ['header' => 'RECURSOS HUMANOS'],
         
         [
             'text' => 'Consulta de Horas',
             'icon' => 'fas fa-angle-double-right',
+            'url' => '',
             'can' => 'canSeeReportsMenu',
             'submenu' => 
             [
@@ -364,6 +344,7 @@ return [
                 ],
             ],
         ],
+
         [
             'text' => 'Gestión de Horas',
             'url' => '/Extras/Show',
@@ -378,10 +359,33 @@ return [
         ],
         [
             'text' => 'Cierre de Horas',
-            'url' => 'Extras/Cierre',
+            'url' => '/Extras/Cierre',
             'can' => 'canSeeHoursClosingMenu',
             'icon' => 'fas fa-table',
         ],
+        [
+            'text'    => 'Herramientas',
+            'icon'    => 'fas fa-fw fa-tools',
+            'can'    => 'manage-blog',
+            'submenu' => [
+                [
+                    'text' => 'Documentos',
+                    'url'  => 'docs/list',
+                    'can'  => ['add-blog-post', 'other-right'],
+                ],
+            ],
+        ],
+ /*        ['header' => 'account_settings'],
+        [
+            'text' => 'profile',
+            'url' => 'admin/settings',
+            'icon' => 'fas fa-fw fa-user',
+        ],
+        [
+            'text' => 'change_password',
+            'url' => 'admin/settings',
+            'icon' => 'fas fa-fw fa-lock',
+        ], */
     ],
 
     /*
