@@ -9,21 +9,31 @@
 @section('content')
     {{-- Dynamic content --}}
     <div class="card-body">
-        <form action="{{route('extras.filtercierre')}}" method="POST">
-            @csrf
-            <div class="row">
-                <div class="form-group col-md-4" style="text-align: left">
+        <div class="row">
+            <div class="form-group col-md-4" style="text-align: left">
+                <form action="{{route('extras.filtercierre')}}" method="POST">
+                    @csrf
                     <select name="motivoExtra" id="motivoExtra" class="form-control" required onchange="refrescarPantalla()">
-                       @foreach ($extrasMotivos as $motivo)
-                          <option value="{{ $motivo->Id }}" {{$motivo->Id == $idMotivo ? "selected" : ""}} >{{ $motivo->Description }}</option>
-                       @endforeach
+                        @foreach ($extrasMotivos as $motivo)
+                           <option value="{{ $motivo->Id }}" {{$motivo->Id == $idMotivo ? "selected" : ""}} >{{ $motivo->Description }}</option>
+                        @endforeach
                     </select>
-                </div>
-                <div class="form-group col-md8">
-                </div>
+                    <button id="btnRefrescar"  class="d-none">Refrescar</button>
+                </form>
             </div>
-            <button id="btnRefrescar"  class="d-none">Refrescar</button>
-        </form>
+            <div class="form-group col-md-7" style="text-align: right; vertical-align: middle">
+                <label for="btnExport">Ultimo Cierre {{Carbon\Carbon::parse($ultimoCierre->FechaCierre)->format('d/m/Y')}}</label>
+            </div>
+            <div class="form-group col-md-1" style="text-align: right">
+                <form action="{{route('extras.export')}}" method="POST">
+                    @csrf
+                    <input type="hidden" name="ultimoCierre" id="ultimoCierre" value="{{$ultimoCierre->FechaCierre}}">
+                    <button type="submit" id="btnExport" class="btn btn-secondary">
+                        Exportar
+                    </button>
+                </form>
+            </div>
+        </div>
         <form action="{{ route('extras.cerrar') }}" method="POST">
             @csrf
             <div class="row">

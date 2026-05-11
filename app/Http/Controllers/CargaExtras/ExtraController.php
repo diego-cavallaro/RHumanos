@@ -13,9 +13,11 @@ use App\Models\Extras\Extra;
 use App\Models\Extras\ExtraReason;
 use App\Models\Extras\Employee;
 use App\Models\Extras\ExtraEstado;
-use App\Models\User;
+use App\Models\Extras\HistoricoCierre;
 use App\Http\Requests\Extras\StoreExtra;
 use App\Http\Requests\Extras\UpdateExtra;
+use App\Exports\ExtrasExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ExtraController extends Controller
 {
@@ -298,7 +300,7 @@ class ExtraController extends Controller
 
     public function cierre(): View
     {
-                //Por defecto definimos como motivo 'Extras'
+        //Por defecto definimos como motivo 'Extras'
         $motivoInicial = 8;
         //Estado con el que vamos a filtrar las extras a aprobar (Aprobadas)
         $estadoInicial = 2;
@@ -313,6 +315,8 @@ class ExtraController extends Controller
         //-----------------------------------------------------------------
         $extrasEstados = ExtraEstado::orderBy('Id', 'asc')->where('ES_CIERRE', 1)->get();
         //-----------------------------------------------------------------
+        //Obtenemos El ultimo cierre realizado para mostrar su fecha en la vista
+        $ultimoCierre = HistoricoCierre::orderBy('FechaCierre', 'desc')->first();
         
         //Obtenemos el Login del usuario logueado
         $usuario = Auth::user();
@@ -327,6 +331,7 @@ class ExtraController extends Controller
         return view('extras.cierreExtras')->with(compact('queryExtras'))
                                          ->with(compact('extrasMotivos'))
                                          ->with(compact('extrasEstados'))
+                                         ->with(compact('ultimoCierre'))
                                          ->with('idMotivo', $motivoInicial)
                                          ->with('idEstado', $estadoAccion);
     }
@@ -352,6 +357,8 @@ class ExtraController extends Controller
         //-----------------------------------------------------------------
         $extrasEstados = ExtraEstado::orderBy('Id', 'asc')->where('ES_CIERRE', 1)->get();
         //-----------------------------------------------------------------
+        //Obtenemos El ultimo cierre realizado para mostrar su fecha en la vista
+        $ultimoCierre = HistoricoCierre::orderBy('FechaCierre', 'desc')->first();
         
         //Obtenemos el Login del usuario logueado
         $usuario = Auth::user();
@@ -366,6 +373,7 @@ class ExtraController extends Controller
         return view('extras.cierreExtras')->with(compact('queryExtras'))
                                           ->with(compact('extrasMotivos'))
                                           ->with(compact('extrasEstados'))
+                                          ->with(compact('ultimoCierre'))
                                           ->with('idMotivo', $motivo)
                                           ->with('idEstado', $estado);
     }
@@ -413,7 +421,7 @@ class ExtraController extends Controller
         return redirect()->route('extras.aprobacion')->with("success","Aprobación con éxito");
     }
 
-    public function cerrar(Request $request): RedirectResponse
+    public function cerrar(Request $request)
     {
         if($request->has('items'))
         {
@@ -422,13 +430,15 @@ class ExtraController extends Controller
             $usuario = Auth::user()->name;
 
             // dd($idsSeleccionados);
+            $extrasSeleccionadas = Extra::findMany($idsSeleccionados);
+            //dd($extrasSeleccionadas);
 
             DB::beginTransaction();
             try 
             {
-                foreach ($idsSeleccionados as $rowId)
+                foreach ($extrasSeleccionadas as $extra)
                 {
-                    $extra = Extra::find($rowId);
+                    //$extra = Extra::find($rowId);
                     if($estado == 3)
                     {
                         $extra->FechaCierre = \Carbon\Carbon::now()->toDateTimeString();
@@ -442,16 +452,37 @@ class ExtraController extends Controller
                     $extra->EXTRA_ESTADO_ID = $estado;
                     $extra->save();
                 }
-
                 DB::commit();
+                
+                //Hacemos la exportación a Excel de los registros marcados
+                // return $this->exportCierreToExcel($extrasSeleccionadas);
+
             } catch (\Exception $e) {
                 DB::rollBack();
                 // dd($e);
                 return redirect()->route('extras.cierre')->with("error","Error al intentar grabar");
             }
         }
-
         // return redirect()->route('extras.aprobacion')->with("success","Aprobación con éxito");
         return redirect()->route('extras.cierre')->with("success","Cierre con éxito");
     }
+
+    public function exportUltimoCierreToExcel(Request $request)
+    {
+        if( $request->post('ultimoCierre') != null)
+        {
+            $ultimoCierre = $request->post('ultimoCierre');
+        };
+
+        $extrasSeleccionadas = Extra::with('Empleado')
+                                ->where('Vb1', 1)
+                                ->where('Cerrado', 0)
+                                ->where('EXTRA_ESTADO_ID', 3)
+                                ->whereDate('FechaCierre', Carbon::parse($ultimoCierre)->toDateString())
+                                ->orderBy('Fecha', 'desc')
+                                ->get();    
+
+        //Hacemos la exportación a Excel de los registros marcados
+        return Excel::download(new ExtrasExport($extrasSeleccionadas), 'CierreExtras'.\Carbon\Carbon::now()->format('Ymd').'.xlsx');
+    }    
 }
