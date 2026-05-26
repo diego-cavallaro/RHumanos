@@ -364,6 +364,12 @@ return [
             'icon' => 'fas fa-table',
         ],
         [
+            'text' => 'Historico de Cierres',
+            'url' => '/Extras/Cierres',
+            'can' => 'canSeeHistoricoCierre',
+            'icon' => 'fas fa-table',
+        ],
+        [
             'text'    => 'Herramientas',
             'icon'    => 'fas fa-fw fa-tools',
             'can'    => 'manage-blog',

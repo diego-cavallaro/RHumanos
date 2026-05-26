@@ -467,22 +467,53 @@ class ExtraController extends Controller
         return redirect()->route('extras.cierre')->with("success","Cierre con éxito");
     }
 
-    public function exportUltimoCierreToExcel(Request $request)
+    public function exportCierreToExcel($fechaCierre)
     {
-        if( $request->post('ultimoCierre') != null)
-        {
-            $ultimoCierre = $request->post('ultimoCierre');
-        };
+        // dd(Carbon::parse($fechaCierre)->format('Ymd'));
+        $fechaDesde = Carbon::parse($fechaCierre)->format('Ymd')." 00:00:00";
+        $fechaHasta = Carbon::parse($fechaCierre)->format('Ymd')." 23:59:59";
 
         $extrasSeleccionadas = Extra::with('Empleado')
-                                ->where('Vb1', 1)
-                                ->where('Cerrado', 0)
+                                // ->where('Vb1', 1)
+                                // ->where('Cerrado', 1)
                                 ->where('EXTRA_ESTADO_ID', 3)
-                                ->whereDate('FechaCierre', Carbon::parse($ultimoCierre)->toDateString())
+                                ->whereBetween('FechaCierre', [$fechaDesde, $fechaHasta])
                                 ->orderBy('Fecha', 'desc')
                                 ->get();    
 
         //Hacemos la exportación a Excel de los registros marcados
-        return Excel::download(new ExtrasExport($extrasSeleccionadas), 'CierreExtras'.\Carbon\Carbon::now()->format('Ymd').'.xlsx');
-    }    
+        return Excel::download(new ExtrasExport($extrasSeleccionadas), 'CierreExtras'.\Carbon\Carbon::parse($fechaCierre)->format('Ymd').'.xlsx');
+    }
+
+    public function historicoCierres(): View
+    {
+        $fechaDesde = Carbon::now()->startOfMonth()->subMonth()->toDateString();
+        $fechaHasta = Carbon::now()->toDateString();
+
+        $cierres = HistoricoCierre::whereBetween('FechaCierre', [$fechaDesde, $fechaHasta])->orderBy('FechaCierre', 'desc')->get(); 
+
+        return view('extras.historicocierres')->with(compact('cierres'))
+                                            ->with('fechaDesde', $fechaDesde)
+                                            ->with('fechaHasta', $fechaHasta);
+    }
+
+    public function historicoCierresFilter(Request $request): View
+    {
+        $fechaDesde = Carbon::now()->startOfMonth()->subMonth()->toDateString();
+        $fechaHasta = Carbon::now()->toDateString();
+        
+        if( $request->post('desde') != null){
+            $fechaDesde = $request->post('desde'); 
+        }
+        if( $request->post('hasta') != null){
+            $fechaHasta = $request->post('hasta');
+        }
+
+        $cierres = HistoricoCierre::whereBetween('FechaCierre', [$fechaDesde, $fechaHasta])->orderBy('FechaCierre', 'desc')->get(); 
+
+        return view('extras.historicocierres')->with(compact('cierres'))
+                                            ->with('fechaDesde', $fechaDesde)
+                                            ->with('fechaHasta', $fechaHasta);
+    }
+
 }

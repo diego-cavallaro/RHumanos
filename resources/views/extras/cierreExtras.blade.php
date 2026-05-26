@@ -25,9 +25,9 @@
                 <label for="btnExport">Ultimo Cierre {{Carbon\Carbon::parse($ultimoCierre->FechaCierre)->format('d/m/Y')}}</label>
             </div>
             <div class="form-group col-md-1" style="text-align: right">
-                <form action="{{route('extras.export')}}" method="POST">
+                <form action="{{route('extras.export', $ultimoCierre->FechaCierre)}}" method="POST">
                     @csrf
-                    <input type="hidden" name="ultimoCierre" id="ultimoCierre" value="{{$ultimoCierre->FechaCierre}}">
+                    {{-- <input type="hidden" name="fechaCierre" id="fechaCierre" value="{{$ultimoCierre->FechaCierre}}"> --}}
                     <button type="submit" id="btnExport" class="btn btn-secondary">
                         Exportar
                     </button>

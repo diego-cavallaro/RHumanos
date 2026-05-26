@@ -127,5 +127,10 @@ class PermissionSeeder extends Seeder
         $permission->name = 'canDesmoldeoHoursClosing';
         $permission->guard_name = 'web';
         $permission->save();
+
+        $permission = new Permission();
+        $permission->name = 'canSeeHistoricoCierre';
+        $permission->guard_name = 'web';
+        $permission->save();
     }
 }

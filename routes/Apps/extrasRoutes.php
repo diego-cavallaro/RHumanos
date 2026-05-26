@@ -30,6 +30,9 @@ Route::middleware
                     Route::post('/Extras/Aprobar', [ExtraController::class, 'aprobar'])->name('extras.aprobar');
                     Route::post('/Extras/Cerrar', [ExtraController::class, 'cerrar'])->name('extras.cerrar');
 
-                    Route::post('Extras/export/', [ExtraController::class, 'exportUltimoCierreToExcel'])->name('extras.export');
+                    Route::post('Extras/export/{fechaCierre}', [ExtraController::class, 'exportCierreToExcel'])->name('extras.export');
+
+                    Route::get('Extras/Cierres/', [ExtraController::class, 'historicoCierres'])->name('extras.historicocierres');
+                    Route::post('Extras/FilterCierre/', [ExtraController::class, 'historicoCierresFilter'])->name('extras.historicocierresfilter');
                 }
             );
