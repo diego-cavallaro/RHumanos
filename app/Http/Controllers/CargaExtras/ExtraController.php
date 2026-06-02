@@ -405,7 +405,7 @@ class ExtraController extends Controller
                     else if($estado == 4)
                     {
                         // $extra->FechaRechazo = \Carbon\Carbon::now()->toDateTimeString();
-                        $extra->FechaAprobacion = Carbon::now()->format('d/m/Y H:i:s');
+                        $extra->FechaRechazo = Carbon::now()->format('d/m/Y H:i:s');
                         $extra->UsuarioRechazo = $usuario;
                     }
 
