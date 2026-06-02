@@ -149,7 +149,8 @@ class ExtraController extends Controller
             $extra->Cerrado = 0;
             $extra->area = $empleado->Area;
             $extra->sector = $empleado->Sector;
-            $extra->FechaAlta = \Carbon\Carbon::now()->toDateTimeString();
+            // $extra->FechaAlta = \Carbon\Carbon::now()->toDateTimeString();
+            $extra->FechaAlta = Carbon::now()->format('d/m/Y H:i:s');
             $extra->Responsable = Auth::user()->name;
             $extra->Observaciones = $request->post('Observaciones');
             $extra->Desde = $extraDesde;
