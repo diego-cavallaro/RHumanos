@@ -398,12 +398,14 @@ class ExtraController extends Controller
                     if($estado == 2)
                     {
                         $extra->Vb1 = 1;
-                        $extra->FechaAprobacion = \Carbon\Carbon::now()->toDateTimeString();
+                        // $extra->FechaAprobacion = \Carbon\Carbon::now()->toDateTimeString();
+                        $extra->FechaAprobacion = Carbon::now()->format('d/m/Y H:i:s');
                         $extra->Aprobador = $usuario;
                     }
                     else if($estado == 4)
                     {
-                        $extra->FechaRechazo = \Carbon\Carbon::now()->toDateTimeString();
+                        // $extra->FechaRechazo = \Carbon\Carbon::now()->toDateTimeString();
+                        $extra->FechaAprobacion = Carbon::now()->format('d/m/Y H:i:s');
                         $extra->UsuarioRechazo = $usuario;
                     }
 
@@ -442,11 +444,13 @@ class ExtraController extends Controller
                     //$extra = Extra::find($rowId);
                     if($estado == 3)
                     {
-                        $extra->FechaCierre = \Carbon\Carbon::now()->toDateTimeString();
+                        // $extra->FechaCierre = \Carbon\Carbon::now()->toDateTimeString();
+                        $extra->FechaCierre = Carbon::now()->format('d/m/Y H:i:s');
                     }
                     else if($estado == 4)
                     {
-                        $extra->FechaRechazo = \Carbon\Carbon::now()->toDateTimeString();
+                        // $extra->FechaRechazo = \Carbon\Carbon::now()->toDateTimeString();
+                        $extra->FechaRechazo = Carbon::now()->format('d/m/Y H:i:s');
                         $extra->UsuarioRechazo = $usuario;
                     }
 
