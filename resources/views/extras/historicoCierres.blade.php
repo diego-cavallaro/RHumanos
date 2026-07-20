@@ -34,7 +34,7 @@
                 @foreach ($cierres as $cierre)
                     <tr>
                         <td class="text-center">{{ Carbon\Carbon::createFromDate($cierre->FechaCierre)->format('d-m-Y') }}</td>
-                        <td class="text-right">{{Number::format($cierre->Extras)}}</td>
+                        <td class="text-right">{{$cierre->Extras}}</td>
                         <td>{{$cierre->ExtraEstadoDesc}}</td>
                         <td class="text-center">
                             <form action="{{route('extras.export', $cierre->FechaCierre)}}" method="POST">

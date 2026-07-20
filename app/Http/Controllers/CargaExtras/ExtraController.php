@@ -25,8 +25,8 @@ class ExtraController extends Controller
     {
         //Por defecto definimos como motivo 'Extras'
         $motivoInicial = 8;
-        $fechaDesde = Carbon::now()->startOfMonth()->subMonth()->toDateString();
-        $fechaHasta = Carbon::now()->toDateString();
+        $fechaDesde = Carbon::now()->startOfMonth()->subMonth()->format('d-m-y');//->toDateString();
+        $fechaHasta = Carbon::now()->format('d-m-y');//->toDateString();
 
         //Obtenemos el Area asociada al usuario Logueado
         //------------------------------------------------------------------
