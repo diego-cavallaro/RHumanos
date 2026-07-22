@@ -75,8 +75,9 @@ class ExtraController extends Controller
                                  ->where('ID_Motivo', $motivo)
                                  ->where('Vb1', 0)
                                  ->where('Cerrado', 0)
-                                 ->whereBetween('Fecha', [$fechaDesde, $fechaHasta])
+                                 ->whereBetween('Fecha', [Carbon::parse($fechaDesde)->format('d-m-Y'), Carbon::parse($fechaHasta)->format('d-m-Y')]) //Se formatea para no obtener valores fuera de intervalo
                                  ->orderBy('Fecha', 'desc')->get();
+        
 
         return view('extras.consultaExtras')->with(compact('extrasMotivos'))
                     ->with(compact('queryExtras'))
