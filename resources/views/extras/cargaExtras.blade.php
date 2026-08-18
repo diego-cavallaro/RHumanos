@@ -16,7 +16,13 @@
             <div class="row">
                <div class="form-group col-md-2">
                   <label for="Fecha">Fecha</label>
-                  <input type="date" name="Fecha" id="Fecha" value= "{{ old('Fecha') ? old('Fecha') : $fecha }}" class="form-control">
+                  <input 
+                            type="date" 
+                            name="Fecha" 
+                            id="Fecha" 
+                            value= "{{ old('Fecha') ? old('Fecha') : $fecha }}" 
+                            max="{{ date('Y-m-d') }}"
+                            class="form-control">
                 </div>
                <div class="form-group col-md-3">
                   <label for="Motivo">Tipo</label>
