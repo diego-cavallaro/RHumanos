@@ -64,6 +64,12 @@
                </div>
             </div>
 
+
+            <div class="row col-md-12">
+                @error('Fecha')
+                    <span style="color: red">{{ $message }}</span>
+                @enderror
+            </div>
             <div class="row col-md-12">
                 @error('Empleado')
                     <span style="color: red">{{ $message }}</span>
