@@ -19,7 +19,7 @@ class StoreExtra extends FormRequest
           'Empleado' => ['required', 
                           'max:10',
                         ],
-          'Fecha' => ['required', 'date', 'before:now' ],
+          'Fecha' => ['required', 'date', 'before:today' ],
           'Motivo' => ['required'],
           'Desde' => ['required', 'date_format:H:i'],
           'Hasta' => ['required', 'date_format:H:i', 'after:Desde'],
