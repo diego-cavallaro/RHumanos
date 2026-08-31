@@ -16,13 +16,11 @@ class StoreExtra extends FormRequest
     public function rules(): array
     {
        return[
-          'Empleado' => ['required', 
-                          'max:10',
-                        ],
-          'Fecha' => ['required', 'date', 'before:today' ],
-          'Motivo' => ['required'],
-          'Desde' => ['required', 'date_format:H:i'],
-          'Hasta' => ['required', 'date_format:H:i', 'after:Desde'],
+               'Empleado' => ['required', 'max:10'],
+                  'Fecha' => ['required', 'date', 'before_or_equal:today' ],
+                 'Motivo' => ['required'],
+                  'Desde' => ['required', 'date_format:H:i'],
+                  'Hasta' => ['required', 'date_format:H:i', 'after:Desde'],
           'Observaciones' => ['max:200'],
        ];
     }
